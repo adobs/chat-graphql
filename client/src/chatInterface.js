@@ -6,7 +6,7 @@ import { HttpLink } from 'apollo-link-http'
 import { WebSocketLink } from 'apollo-link-ws'
 import { getMainDefinition } from 'apollo-utilities'
 import { ApolloProvider } from '@apollo/react-hooks';
-import { Chat, UpdateChat } from './chat';
+import { ChatWithData, UpdateChat } from './chat';
 import MessageBox from './messageBox';
 
 const httpLink = new HttpLink({
@@ -49,7 +49,7 @@ const client = new ApolloClient({
 function ChatInterface ({ from }) {
     return(
         <ApolloProvider client={client}>
-            <Chat />
+            <ChatWithData />
             <UpdateChat />
             <MessageBox from={from}/>
         </ApolloProvider>
