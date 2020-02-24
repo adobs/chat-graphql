@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect } from 'react';
+import React, { useState, useContext } from 'react';
 
 const cachedUser = localStorage.getItem('user');
 const initialData = { user: cachedUser, authed: false };
@@ -12,14 +12,14 @@ export const AuthProvider = props => {
 
   const [data, setData] = useState(initialData);
 
-  const checkAuth = () => {
-    if (cachedUser) {
-      setData({ user: cachedUser, authed: true });
-      return true;
-    } else {
-      return false;
-    }
-  };
+  // const checkAuth = () => {
+  //   if (cachedUser) {
+  //     setData({ user: cachedUser, authed: true });
+  //     return true;
+  //   } else {
+  //     return false;
+  //   }
+  // };
 
   const login = user => {
     console.log('logging in user', user);

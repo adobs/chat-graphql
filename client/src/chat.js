@@ -2,23 +2,35 @@ import React from 'react';
 import { useSubscription, useQuery } from '@apollo/react-hooks';
 import {
   CHATS_QUERY,
-  MESSAGE_SENT_SUBSCRIPTION,
+  // MESSAGE_SENT_SUBSCRIPTION,
   SUBSCRIBE_TO_MORE,
   NOTIFY_NEW_CHAT
 } from './graphql';
-import { graphql } from '@apollo/react-hoc';
 
 import { useAuth } from './useAuth';
 
 const Chat = props => {
   const auth = useAuth();
   console.log(props);
-  const { data, loading, error } = useSubscription(NOTIFY_NEW_CHAT);
-
+  const sub = useSubscription(NOTIFY_NEW_CHAT);
+  console.log(sub);
+  // console.log('subscritpion stuff', data, loading, error);
   // if (props.data.loading) return <b>Loading...</b>;
   // if (props.data.error) return `Error! ${props.data.error.message}`;
   console.log(props);
-  console.log(data, loading, error);
+  // console.log(data, loading, error);
+  React.useEffect(() => {
+    props.chatSubscription();
+
+    // *********************
+    // This is a hack
+    // this isn't how it's
+    // supposed to work
+    //
+    //********************* */
+    props.startPolling(500); // this is the hack
+    // ******************** */
+  }, [sub]);
 
   if (props.loading) {
     return <b>Loading...</b>;
@@ -45,7 +57,7 @@ const ChatWithData = () => {
   return (
     <Chat
       {...result}
-      subscribeToNewChats={() =>
+      chatSubscription={() =>
         subscribeToMore({
           document: SUBSCRIBE_TO_MORE,
           variables: { channel: 'CHAT_CHANNEL' },
@@ -54,9 +66,10 @@ const ChatWithData = () => {
             if (!subscriptionData.data) return prev;
             const newChatItem = subscriptionData.data;
             console.log(newChatItem);
+            console.log('--------======----=====');
             return Object.assign({}, prev, {
               entry: {
-                comments: [...prev.entry.chats]
+                comments: [newChatItem, ...prev.entry.chats]
               }
             });
           }

@@ -37,13 +37,18 @@ export const MESSAGE_SENT_SUBSCRIPTION = gql`
 
 export const NOTIFY_NEW_CHAT = gql`
   subscription chatSubscription {
-    Chat
+    chatSubscription {
+      id
+      from
+      message
+      createdAt
+    }
   }
 `;
 
 export const SUBSCRIBE_TO_MORE = gql`
   subscription notifyNewChat {
-    notifyNewChat {
+    chatSubscription {
       id
       from
       message

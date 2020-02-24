@@ -1,10 +1,9 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useAuth } from './useAuth';
-import { Redirect, useLocation, useHistory } from 'react-router-dom';
+import { Redirect } from 'react-router-dom';
 
 const Login = props => {
   const auth = useAuth();
-  const location = useLocation();
   // const { referer } = location.state || { referer: { pathname: '/chat' } };
 
   const [inputValue, setInputValue] = React.useState('');

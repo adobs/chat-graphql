@@ -7,7 +7,7 @@ function MessageBox() {
   const { user } = useAuth();
   const [sendMessage, chat] = useMutation(SEND_MESSAGE_MUTATION);
   const sub = useSubscription(NOTIFY_NEW_CHAT);
-  console.log('sub ', sub);
+  console.log('sub ', sub, chat);
   let textarea = React.createRef();
 
   return (

@@ -33,7 +33,7 @@ const typeDefs = gql`
 
   type Subscription {
     messageSent: Chat
-    chatSubscription: Chat
+    chatSubscription: [Chat!]!
   }
 
   schema {
