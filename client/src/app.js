@@ -1,56 +1,31 @@
-import React from 'react';
-import { BrowserRouter as Router, Route } from 'react-router-dom';
+import React, { useEffect, useCallback, useState } from 'react';
+import { BrowserRouter as Router, Switch, Route, Redirect } from 'react-router-dom';
+
+import { AuthProvider } from './useAuth';
+
+// Apollo
+import { ApolloProvider } from '@apollo/react-hooks';
+import { createApolloClient } from './initApollo';
+
+// Chat UI
+import { PrivateRoute } from './privateRoute';
 import Login from './login';
 import ChatInterface from './chatInterface';
 
-// class App extends React.Component {
-//     constructor(props) {
-//         super(props);
-//
-//         this.state = {
-//             from: ''
-//         }
-//     }
-//
-//     onInputChange = (from) => {
-//         this.setState({ from })
-//     }
-//
-//     render() {
-//         return (
-//             <div>
-//                 <Router>
-//                     <Route exact path='/' render={() => <Login onInputChange={this.onInputChange} />} />
-//                     <Route path='/chat' render={() => <ChatInterface from={this.state.from}/>} />
-//                 </Router>
-//             </div>
-//         );
-//     }
-// }
-// useEffect(() => {
-//  // this shit runs on launch of compts
-//
-// },[])
-
-const App = () => {
-    const [from, setFrom] = React.useState('');
-
-    // const {loginRender} = React.useCallback(() => <Login onInputChange={onInputChange} />)
-
-    const onInputChange = (from) => {
-        setFrom(from);
-    }
-
-    return (
-        <div>
-            <Router>
-                <Route exact path='/' render={() => <Login onInputChange={onInputChange} />} />
-                <Route path='/chat' render={() => <ChatInterface from={from}/>} />
-            </Router>
-        </div>
-    )
-}
-
-
+const App = props => {
+  const client = createApolloClient();
+  return (
+    <ApolloProvider client={client}>
+      <Router>
+        <AuthProvider>
+          <Switch>
+            <PrivateRoute exact path="/chat" component={ChatInterface} />
+            <Route path="/" component={Login} />
+          </Switch>
+        </AuthProvider>
+      </Router>
+    </ApolloProvider>
+  );
+};
 
 export default App;

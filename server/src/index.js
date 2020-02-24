@@ -1,9 +1,24 @@
-const { GraphQLServer, PubSub } = require('graphql-yoga')
-const typeDefs = require('./schema')
-const resolvers = require('./resolvers')
+const { ApolloServer, PubSub } = require('apollo-server');
 
-const pubSub = new PubSub();
-const server = new GraphQLServer({ typeDefs, resolvers, context: { pubSub }})
-// const server = new GraphQLServer({ typeDefs, resolvers, context });
+const typeDefs = require('./schema');
+const resolvers = require('./resolvers');
 
-server.start(() => console.log('server on localhost:4000'));
+// const pubSub = new PubSub();
+const server = new ApolloServer({
+  typeDefs,
+  resolvers,
+  subscriptions: {
+    onConnect: (connectionParams, webSocket) => {
+      console.log('[server]: welcome new user');
+      return { status: 'online' };
+    },
+    onDisconnect: (connectionParams, webSocket, context) => {
+      console.log('[server]: Goodbye friend!');
+    }
+  }
+});
+
+server.listen().then(({ url, subscriptionsUrl }) => {
+  console.log(`Server ready on ${url}`);
+  console.log(`Websockets ready on ${subscriptionsUrl}`);
+});

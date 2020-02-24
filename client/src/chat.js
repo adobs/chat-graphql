@@ -1,38 +1,37 @@
 import React from 'react';
-import { useSubscription, useQuery} from '@apollo/react-hooks';
-import { CHATS_QUERY, MESSAGE_SENT_SUBSCRIPTION } from './graphql';
+import { useSubscription, useApolloClient } from '@apollo/react-hooks';
+import { CHATS_QUERY, MESSAGE_SENT_SUBSCRIPTION, NOTIFY_NEW_CHAT } from './graphql';
+import { graphql } from '@apollo/react-hoc';
+import { useAuth } from './useAuth';
 
-export function UpdateChat() {
-    const { data , loading, error } = useSubscription(
-        MESSAGE_SENT_SUBSCRIPTION
-    );
+const Chat = props => {
+  console.log(props);
+  // const { data, loading, error } = useSubscription(NOTIFY_NEW_CHAT);
 
-    if (loading) return null
-    if (error) return `Error! ${error.message}`;
-    console.log("data ", data)
-    const { messageSent } = data;
-    return (
-        <div key={messageSent.id}>
-            <span>{messageSent.from}</span>
-            <div>{messageSent.message}</div>
-        </div>
-    )
-}
+  // const [chatData, setChatData] = React.useState({
+  //   // olderChatsAvailable: props.latestChat ? true : false,
+  //   lastRefresh: new Date(),
+  //   error: false,
+  //   chats: []
+  // });
 
-export function Chat() {
-    const { loading, error, data } = useQuery(CHATS_QUERY);
+  // console.log({ data, loading, error, chats });
 
-    if (loading) return 'Loading...';
-    if (error) return `Error! ${error.message}`;
-    console.log("IN CHAT QUERY")
-    return (
-        <div>
-            {data.chats.map(chat => (
-                <div key={chat.id}>
-                    <span>{chat.from}</span>
-                    <div>{chat.message}</div>
-                </div>
-            ))}
-        </div>
-    );
+  React.useEffect(() => {
+    // loadOlder();
+  }, []); // passing an empty array means it is always called
+
+  // React.useEffect(() => {
+  //   if (props.latestChat) {
+  //     setChatData(prevState => ({ ...prevState, lastRefresh: new Date() }));
+  //     console.log('updated...');
+  //   }
+  // }, [props.latestChat]); // whereas this is called when props.latestChat changes
+
+  if (props.data.loading) return <b>Loading...</b>;
+  if (props.data.error) return `Error! ${props.data.error.message}`;
+  // console.log('data ', data);
+  return <b>test</b>;
 };
+
+export default graphql(CHATS_QUERY)(Chat);

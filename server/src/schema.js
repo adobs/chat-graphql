@@ -1,23 +1,36 @@
 const { gql } = require('apollo-server');
 
+// Field names should use camelCase. Many GraphQL clients are written in JavaScript, Java, Kotlin, or Swift, all of which recommend camelCase for variable names.
+// Type names should use PascalCase. This matches how classes are defined in the languages mentioned above.
+// Enum names should use PascalCase.
+// Enum values should use ALL_CAPS, because they are similar to constants.
+
 const typeDefs = gql`
-    type Chat {
-        id: Int!
-        from: String!
-        message: String!
-    }
+  type User {
+    id: ID!
+    createdAt: String!
+    name: String!
+  }
 
-    type Query {
-        chats: [Chat]
-    }
+  type Chat {
+    id: ID!
+    createdAt: String
+    from: String!
+    message: String!
+  }
 
-    type Mutation {
-        sendMessage(from: String!, message: String!): Chat
-    }
+  type Query {
+    chats: [Chat!]!
+  }
 
-    type Subscription {
-        messageSent: Chat
-    }
+  type Mutation {
+    sendMessage(from: String!, message: String!, createdAt: String!): Chat!
+  }
 
+  type Subscription {
+    messageSent: Chat
+    notifyNewChat: Chat
+  }
 `;
-module.exports = typeDefs
+
+module.exports = typeDefs;

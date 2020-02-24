@@ -1,34 +1,42 @@
-const chats = []
-const CHAT_CHANNEL = 'CHAT_CHANNEL'
+const chats = [];
+const CHAT_CHANNEL = 'CHAT_CHANNEL';
+const { pubSub } = require('apollo-server');
 
 const resolvers = {
-      Query: {
-          chats(obj, args, context) {
-              return chats;
-          }
-      },
+  Query: {
+    chats(obj, args, context) {
+      console.log({ obj, args, context });
+      return chats;
+    }
+  },
 
-      Mutation: {
-          sendMessage(obj, { from, message }, { pubSub }) {
-              const chat = { id: chats.length + 1, from, message };
-              chats.push(chat);
-              pubSub.publish('CHAT_CHANNEL', { messageSent: chat })
+  Mutation: {
+    sendMessage(obj, { from, message }) {
+      const chat = { id: chats.length + 1, from, message };
+      chats.push(chat);
+      pubSub.publish('CHAT_CHANNEL', { messageSent: chat });
 
-              return chat;
-          }
-      },
+      return chat;
+    }
+  },
 
-      // Next, we make use of the publish() from the pubsub object, which accepts two arguments:
-      // the channel (CHAT_CHANNEL) to publish to and an object containing the event
-      // (messageSent, which must match the name of our subscription) to be fired and
-      // the data (in this case the new message) to pass along with it.
-      Subscription: {
-          messageSent: {
-              subscribe: (obj, args, { pubSub }) => {
-                  return pubSub.asyncIterator(CHAT_CHANNEL);
-              }
-          }
+  // Next, we make use of the publish() from the pubsub object, which accepts two arguments:
+  // the channel (CHAT_CHANNEL) to publish to and an object containing the event
+  // (messageSent, which must match the name of our subscription) to be fired and
+  // the data (in this case the new message) to pass along with it.
+  Subscription: {
+    messageSent: {
+      subscribe: (obj, args, context) => {
+        return pubSub.asyncIterator(CHAT_CHANNEL);
       }
+    },
+    notifyNewChat: {
+      subscribe: (obj, args) => {
+        console.log('pubsub', obj, args, pubSub);
+        return pubSub.asyncIterator(CHAT_CHANNEL, { args, obj });
+      }
+    }
+  }
 };
 
-module.exports = resolvers
+module.exports = resolvers;
