@@ -1,10 +1,13 @@
 import React from 'react';
-import { useMutation } from '@apollo/react-hooks';
-import { SEND_MESSAGE_MUTATION } from './graphql';
+import { useMutation, useSubscription } from '@apollo/react-hooks';
+import { SEND_MESSAGE_MUTATION, NOTIFY_NEW_CHAT } from './graphql';
+import { useAuth } from './useAuth';
 
-function MessageBox({ from }) {
+function MessageBox() {
+  const { user } = useAuth();
   const [sendMessage, chat] = useMutation(SEND_MESSAGE_MUTATION);
-  console.log('chat ', chat);
+  const sub = useSubscription(NOTIFY_NEW_CHAT);
+  console.log('sub ', sub);
   let textarea = React.createRef();
 
   return (
@@ -12,8 +15,12 @@ function MessageBox({ from }) {
       <form
         onSubmit={e => {
           e.preventDefault();
-          console.log({ variables: { from, message: textarea.value } });
-          // sendMessage();
+          console.log({
+            variables: { from: user, message: textarea.value, createdAt: new Date().toDateString() }
+          });
+          sendMessage({
+            variables: { from: user, message: textarea.value, createdAt: new Date().toDateString() }
+          });
           textarea.value = '';
         }}
       >

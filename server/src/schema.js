@@ -11,7 +11,11 @@ const typeDefs = gql`
     createdAt: String!
     name: String!
   }
-
+  input ChatInput {
+    createdAt: String
+    from: String!
+    message: String!
+  }
   type Chat {
     id: ID!
     createdAt: String
@@ -29,7 +33,13 @@ const typeDefs = gql`
 
   type Subscription {
     messageSent: Chat
-    notifyNewChat: Chat
+    chatSubscription: Chat
+  }
+
+  schema {
+    query: Query
+    mutation: Mutation
+    subscription: Subscription
   }
 `;
 

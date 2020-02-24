@@ -1,37 +1,71 @@
 import React from 'react';
-import { useSubscription, useApolloClient } from '@apollo/react-hooks';
-import { CHATS_QUERY, MESSAGE_SENT_SUBSCRIPTION, NOTIFY_NEW_CHAT } from './graphql';
+import { useSubscription, useQuery } from '@apollo/react-hooks';
+import {
+  CHATS_QUERY,
+  MESSAGE_SENT_SUBSCRIPTION,
+  SUBSCRIBE_TO_MORE,
+  NOTIFY_NEW_CHAT
+} from './graphql';
 import { graphql } from '@apollo/react-hoc';
+
 import { useAuth } from './useAuth';
 
 const Chat = props => {
+  const auth = useAuth();
   console.log(props);
-  // const { data, loading, error } = useSubscription(NOTIFY_NEW_CHAT);
+  const { data, loading, error } = useSubscription(NOTIFY_NEW_CHAT);
 
-  // const [chatData, setChatData] = React.useState({
-  //   // olderChatsAvailable: props.latestChat ? true : false,
-  //   lastRefresh: new Date(),
-  //   error: false,
-  //   chats: []
-  // });
+  // if (props.data.loading) return <b>Loading...</b>;
+  // if (props.data.error) return `Error! ${props.data.error.message}`;
+  console.log(props);
+  console.log(data, loading, error);
 
-  // console.log({ data, loading, error, chats });
-
-  React.useEffect(() => {
-    // loadOlder();
-  }, []); // passing an empty array means it is always called
-
-  // React.useEffect(() => {
-  //   if (props.latestChat) {
-  //     setChatData(prevState => ({ ...prevState, lastRefresh: new Date() }));
-  //     console.log('updated...');
-  //   }
-  // }, [props.latestChat]); // whereas this is called when props.latestChat changes
-
-  if (props.data.loading) return <b>Loading...</b>;
-  if (props.data.error) return `Error! ${props.data.error.message}`;
-  // console.log('data ', data);
-  return <b>test</b>;
+  if (props.loading) {
+    return <b>Loading...</b>;
+  } else {
+    return (
+      <div>
+        <b>Welcome,{auth.user} </b>
+        <ul>
+          {props.data.chats.map((chat, i) => (
+            <li key={i}>
+              {chat.from === auth.user ? 'you' : auth.user} said -- <div>{chat.message}</div>
+            </li>
+          ))}
+        </ul>
+      </div>
+    );
+  }
 };
 
-export default graphql(CHATS_QUERY)(Chat);
+const ChatWithData = () => {
+  const { subscribeToMore, ...result } = useQuery(CHATS_QUERY, {
+    variables: { channel: 'CHAT_CHANNEL' }
+  });
+  return (
+    <Chat
+      {...result}
+      subscribeToNewChats={() =>
+        subscribeToMore({
+          document: SUBSCRIBE_TO_MORE,
+          variables: { channel: 'CHAT_CHANNEL' },
+          updateQuery: (prev, { subscriptionData }) => {
+            console.log(prev, subscriptionData);
+            if (!subscriptionData.data) return prev;
+            const newChatItem = subscriptionData.data;
+            console.log(newChatItem);
+            return Object.assign({}, prev, {
+              entry: {
+                comments: [...prev.entry.chats]
+              }
+            });
+          }
+        })
+      }
+    />
+  );
+};
+
+export default ChatWithData;
+
+// export default graphql(CHATS_QUERY)(Chat);

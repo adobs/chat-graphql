@@ -34,21 +34,20 @@ export const MESSAGE_SENT_SUBSCRIPTION = gql`
     }
   }
 `;
-// , order_by: { created_at: desc }
-// export const GET_LAST_CHAT_WITH_LIMIT = gql`
-//   query ChatsQuery($limit: Int!) {
-//     chats {
-//       id
-//       from
-//       message
-//     }
-//   }
-// `;
 
 export const NOTIFY_NEW_CHAT = gql`
-  subscription onNewChat {
+  subscription chatSubscription {
+    Chat
+  }
+`;
+
+export const SUBSCRIBE_TO_MORE = gql`
+  subscription notifyNewChat {
     notifyNewChat {
       id
+      from
+      message
+      createdAt
     }
   }
 `;

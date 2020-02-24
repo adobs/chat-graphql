@@ -1,6 +1,10 @@
+const { PubSub } = require('apollo-server');
+
+const ps = new PubSub();
+
 const chats = [];
 const CHAT_CHANNEL = 'CHAT_CHANNEL';
-const { pubSub } = require('apollo-server');
+const CHAT_ADDED = 'CHAT_ADDED';
 
 const resolvers = {
   Query: {
@@ -11,10 +15,10 @@ const resolvers = {
   },
 
   Mutation: {
-    sendMessage(obj, { from, message }) {
-      const chat = { id: chats.length + 1, from, message };
+    sendMessage(obj, { from, message, createdAt }) {
+      const chat = { id: chats.length + 1, from, message, createdAt };
       chats.push(chat);
-      pubSub.publish('CHAT_CHANNEL', { messageSent: chat });
+      ps.publish('CHAT_CHANNEL', { messageSent: chat });
 
       return chat;
     }
@@ -26,14 +30,16 @@ const resolvers = {
   // the data (in this case the new message) to pass along with it.
   Subscription: {
     messageSent: {
-      subscribe: (obj, args, context) => {
-        return pubSub.asyncIterator(CHAT_CHANNEL);
+      subscribe: (obj, args) => {
+        console.log(obj, args);
+        console.log('messageSent');
+        return ps.asyncIterator(CHAT_CHANNEL, { args, obj });
       }
     },
-    notifyNewChat: {
-      subscribe: (obj, args) => {
-        console.log('pubsub', obj, args, pubSub);
-        return pubSub.asyncIterator(CHAT_CHANNEL, { args, obj });
+    chatSubscription: {
+      subscribe: async () => {
+        console.log('NotifiyNewChats');
+        return ps.asyncIterator([CHAT_ADDED]);
       }
     }
   }

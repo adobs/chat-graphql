@@ -32,11 +32,10 @@ const terminatingLink = split(
 // Totally Optional... we can send the user in headers
 const authLink = new ApolloLink((operation, forward) => {
   operation.setContext(({ headers = {} }) => {
-    const user = localStorage.getItem('chat-user');
-
-    if (user) {
-      headers = { ...headers, 'apollo-chat-user': user };
-    }
+    // capture user here from auth
+    // if (user) {
+    //   headers = { ...headers, 'apollo-chat-user': user };
+    // }
 
     return { headers };
   });
@@ -46,10 +45,10 @@ const authLink = new ApolloLink((operation, forward) => {
 
 const errorLink = onError(({ graphQLErrors, networkError }) => {
   if (graphQLErrors) {
-    console.log(JSON.stringify(graphQLErrors));
-    // graphQLErrors.forEach(({ message, locations, path }) => {
-    //   console.log('GraphQL error', message);
-    // });
+    // console.log(JSON.stringify(graphQLErrors));
+    graphQLErrors.forEach(({ message, locations, path }) => {
+      console.log('GraphQL error', message);
+    });
   }
 
   if (networkError) {
