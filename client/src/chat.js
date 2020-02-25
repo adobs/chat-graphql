@@ -12,6 +12,18 @@ export function UpdateChat() {
     if (error) return `Error! ${error.message}`;
 
     const { messageSent } = data;
+    data.fetchMore({
+        updateQuery: (previousResult, { subscriptionData }) => {
+            console.log('previousResult ', previousResult)
+            console.log('subscriptionData ', subscriptionData)
+            return {
+                ...previousResult,
+                // Add the new feed data to the end of the old feed data.
+                ...subscriptionData,
+            };
+        },
+    });
+
     return (
         <div key={messageSent.id}>
             <span>{messageSent.from}</span>
@@ -38,13 +50,15 @@ export function ChatWithData() {
     );
 };
 
-function Chat({ data: { chats }, loading, error }) {
+export function Chat() {
+    const { loading, error, data } = useQuery(CHATS_QUERY);
+
     if (loading) return 'Loading...';
     if (error) return `Error! ${error.message}`;
-    console.log("IN CHAT QUERY", chats)
+
     return (
         <div>
-            {chats.map(({ id, from, message }) => (
+            {data.chats.map(({ id, from, message }) => (
                 <div key={id}>
                     <span>{from}</span>
                     <div>{message}</div>
