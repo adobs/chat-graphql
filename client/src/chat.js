@@ -20,28 +20,28 @@ export function UpdateChat() {
     )
 }
 
-// function Chat() {
-//     const { loading, error, data } = useQuery(CHATS_QUERY);
-//
-//     if (loading) return 'Loading...';
-//     if (error) return `Error! ${error.message}`;
-//     console.log("IN CHAT QUERY")
-//     return (
-//         <div>
-//             {data.chats.map(chat => (
-//                 <div key={chat.id}>
-//                     <span>{chat.from}</span>
-//                     <div>{chat.message}</div>
-//                 </div>
-//             ))}
-//         </div>
-//     );
-// };
+export function ChatWithData() {
+    const { loading, error, data } = useQuery(CHATS_QUERY);
+
+    if (loading) return 'Loading...';
+    if (error) return `Error! ${error.message}`;
+    console.log("IN CHAT QUERY")
+    return (
+        <div>
+            {data.chats.map(chat => (
+                <div key={chat.id}>
+                    <span>{chat.from}</span>
+                    <div>{chat.message}</div>
+                </div>
+            ))}
+        </div>
+    );
+};
 
 function Chat({ data: { chats }, loading, error }) {
     if (loading) return 'Loading...';
     if (error) return `Error! ${error.message}`;
-
+    console.log("IN CHAT QUERY", chats)
     return (
         <div>
             {chats.map(({ id, from, message }) => (
@@ -55,7 +55,7 @@ function Chat({ data: { chats }, loading, error }) {
 }
 
 // Create our enhancer function.
-const withChatQuery = graphql(CHATS_QUERY);
-
-// // Enhance our component.
-export const ChatWithData = withChatQuery(Chat);
+// const withChatQuery = graphql(CHATS_QUERY);
+//
+// // // Enhance our component.
+// export const ChatWithData = withChatQuery(Chat);
