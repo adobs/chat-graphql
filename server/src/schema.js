@@ -1,23 +1,22 @@
 const { gql } = require('apollo-server');
 
 const typeDefs = gql`
-    type Chat {
-        id: Int!
-        from: String!
-        message: String!
-    }
+  type Chat {
+    id: Int!
+    from: String!
+    message: String!
+  }
 
-    type Query {
-        chats: [Chat]
-    }
+  type Query {
+    chats: [Chat]
+  }
 
-    type Mutation {
-        sendMessage(from: String!, message: String!): Chat
-    }
+  type Mutation {
+    sendMessage(from: String!, message: String!): Chat
+  }
 
-    type Subscription {
-        messageSent: Chat
-    }
-
+  type Subscription {
+    messageSent: Chat
+  }
 `;
-module.exports = typeDefs
+module.exports = typeDefs;

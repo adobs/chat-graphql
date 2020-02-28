@@ -33,24 +33,22 @@ import ChatInterface from './chatInterface';
 // },[])
 
 const App = () => {
-    const [from, setFrom] = React.useState('');
+  const [from, setFrom] = React.useState('');
 
-    // const {loginRender} = React.useCallback(() => <Login onInputChange={onInputChange} />)
+  // const {loginRender} = React.useCallback(() => <Login onInputChange={onInputChange} />)
 
-    const onInputChange = (from) => {
-        setFrom(from);
-    }
+  const onInputChange = from => {
+    setFrom(from);
+  };
 
-    return (
-        <div>
-            <Router>
-                <Route exact path='/' render={() => <Login onInputChange={onInputChange} />} />
-                <Route path='/chat' render={() => <ChatInterface from={from}/>} />
-            </Router>
-        </div>
-    )
-}
-
-
+  return (
+    <div>
+      <Router>
+        <Route exact path="/" render={() => <Login onInputChange={onInputChange} />} />
+        <Route path="/chat" render={() => <ChatInterface from={from} />} />
+      </Router>
+    </div>
+  );
+};
 
 export default App;
