@@ -6,7 +6,7 @@ import { HttpLink } from 'apollo-link-http';
 import { WebSocketLink } from 'apollo-link-ws';
 import { getMainDefinition } from 'apollo-utilities';
 import { ApolloProvider } from '@apollo/react-hooks';
-import { Chat } from './chat';
+import Chat from './chat';
 
 const httpLink = new HttpLink({
   uri: 'http://localhost:4000'
